@@ -79,7 +79,7 @@ angular.module("test", ["ngRoute", "flash"])
     flashProvider.addType("info", "alert alert-info");
     flashProvider.addType("success", "alert alert-success");
     flashProvider.addType("warning", "alert alert-warning");
-  })
+  });
 ```
 
 Now, every time you add a new message with the type “info”, the DOM element
@@ -103,7 +103,7 @@ this when using _ngRoute_ to switch between views:
 angular.module("test", ["ngRoute", "flash"])
   .config(function(flashProvider) {
     flashProvider.clearOnEvent("$routeChangeStart");
-  })
+  });
 ```
 
 With this configuration, whenever the `$routeChangeStart` event is emitted on
