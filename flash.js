@@ -1,10 +1,15 @@
 angular.module("flash", [])
   .provider("flash", function() {
     var types = {};
+    var clearOnRootScopeEvents = [];
 
     return {
       addType: function(type, value) {
         types[type] = value;
+      },
+  
+      clearOnEvent: function(name) {
+        clearOnRootScopeEvents.push(name);
       },
 
       $get: function() {
@@ -22,6 +27,8 @@ angular.module("flash", [])
             return _this.messages;
           },
 
+          clearOnRootScopeEvents: clearOnRootScopeEvents,
+
           clearMessages: function() {
             _this.messages.length = 0;
           }
@@ -30,6 +37,8 @@ angular.module("flash", [])
     };
   })
 
+  // TODO: Seriously reconsider removing the listning on the root scope from
+  //       this directive and finding another place to put it.
   .directive("flashMessages", function($rootScope, flash) {
     return {
       restrict: "E",
@@ -41,6 +50,11 @@ angular.module("flash", [])
       ].join(""),
       link: function(scope) {
         scope.flash = { messages: flash.getMessages() };
+
+        var clearFunc = function() { flash.clearMessages(); };
+        angular.forEach(flash.clearOnRootScopeEvents, function(eventName) {
+          $rootScope.$on(eventName, clearFunc);
+        });
       }
     }
   })
